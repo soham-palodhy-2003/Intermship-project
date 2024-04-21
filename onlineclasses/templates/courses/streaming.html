@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Live Class</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 10px;
+            color: darkblue;
+            font-size: 15px;
+        }
+
+        #videoElement {
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            border: 1px solid black;
+        }
+
+        #chatContainer {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            align-items: flex-start;
+        }
+
+        #chatPanel {
+            width: 30%;
+            height: 100vh;
+            padding: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+        }
+
+        .button-container {
+            margin-bottom: 10px;
+        }
+
+        .button-container button {
+            font-size: 12px;
+            padding: 6px 12px;
+            margin: 5px;
+        }
+
+        #statusMessage {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .startBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .stopBtn {
+            background-color: #f44336;
+            color: lightyellow;
+            padding: 10px 20px;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background-color: orange;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:disabled {
+            background-color: darkblue;
+            cursor: not-allowed;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: darkblue;
+            font-size: 20px;
+        }
+
+        #chat-log {
+            width: 240px;
+            height: 400px;
+            position: fixed;
+            top: 40%;
+            right: 20px;
+            transform: translateY(-50%);
+            padding: 10px;
+            font-size: 14px;
+            background-color: darkgray;
+            border: 3px solid black;
+            resize: none;
+            overflow-y: auto;
+        }
+
+        #chat-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            height: 80vh;
+            padding: 6px;
+            background-color: #f8f9fa;
+            margin-top: 0px;
+        }
+
+        #chat-message-input {
+            width: 400px;
+            padding: 6px;
+            font-size: 16px;
+        }
+
+        #chat-message-submit {
+            padding: 6px 12px;
+            margin-top: 10px;
+            margin-left: 10px;
+            font-size: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Live Class</h1>
+    <div class="main-grid-container">
+
+        <video id="videoElement" autoplay></video>
+        <div class="button-container">
+            <button id="btn-toggle-audio" onclick="toggleAudio()">Audio Mute</button>
+            <button id="btn-toggle-video" onclick="toggleVideo()">Video Off</button>
+            <button id="startBtn" class="startBtn" onclick="startRecording()">Start Recording</button>
+            <button id="stopBtn" class="stopBtn" onclick="stopRecording()" disabled>Stop Recording</button>
+        </div>
+        <p id="statusMessage"></p>
+        <div class="button-container">
+            <button onclick="downloadRecording()" class="download-btn" disabled>Download Recording</button>
+        </div>
+        <script>
+            let videoStream;
+            let audioStream;
+            let mediaRecorder;
+            let recordedChunks = [];
+
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(function (stream) {
+                    const videoElement = document.getElementById('videoElement');
+                    videoElement.srcObject = stream;
+                    videoStream = stream;
+                    videoTracks = videoStream.getVideoTracks();
+                    audioStream = new AudioContext().createMediaStreamSource(stream);
+                    audioTracks = audioStream.mediaStream.getAudioTracks();
+
+                })
+                .catch(function (error) {
+                    console.error('Error accessing the camera and microphone:', error);
+                });
+
+            function startRecording() {
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
+                mediaRecorder.ondataavailable = handleDataAvailable;
+                mediaRecorder.start();
+                updateRecordingStatus(true);
+            }
+
+            function stopRecording() {
+                mediaRecorder.stop();
+                updateRecordingStatus(false);
+            }
+
+            function handleDataAvailable(event) {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            }
+
+            function downloadRecording() {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'recorded_video.webm';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                const formData = new FormData();
+                formData.append('video', blob, 'recorded_video.webm');
+                fetch('/save-recording/', {
+                    method: 'POST',
+                    body: formData
+                }).then(function (response) {
+                    console.log('Recording saved successfully!');
+                }).catch(function (error) {
+                    console.error('Error saving recording:', error);
+                });
+            }
+
+            function updateRecordingStatus(isRecording) {
+                const startBtn = document.getElementById('startBtn');
+                const stopBtn = document.getElementById('stopBtn');
+                const downloadBtn = document.querySelector('button[onclick="downloadRecording()"]');
+                const statusMessage = document.getElementById('statusMessage');
+
+                startBtn.disabled = isRecording;
+                stopBtn.disabled = !isRecording;
+                downloadBtn.disabled = isRecording;
+                statusMessage.textContent = isRecording ? 'Recording in progress...' : 'Recording stopped.';
+
+
+                const socket = new WebSocket('ws://localhost:8000/');
+            }
+            function toggleAudio() {
+                for (const track of audioTracks) {
+                    track.enabled = !track.enabled;
+                }
+                const audioBtn = document.getElementById('btn-toggle-audio');
+                audioBtn.textContent = audioTracks[0].enabled ? 'Audio Mute' : 'Audio Unmute';
+            }
+
+            function toggleVideo() {
+
+                for (const track of videoTracks) {
+                    track.enabled = !track.enabled;
+                }
+                const videoBtn = document.getElementById('btn-toggle-video');
+                videoBtn.textContent = videoTracks[0].enabled ? 'Video Off' : 'Video On';
+            }
+
+        </script>
+        <h2>Chat Box</h2>
+        <textarea id="chat-log" cols="30" rows="10"></textarea><br>
+        <input id="chat-message-input" type="text" size="20"><br>
+        <input id="chat-message-submit" type="button" value="Send">
+        {{ room_name|json_script:"room-name" }}
+
+
+
+        <script>
+            const roomName = JSON.parse(document.getElementById('room-name').textContent);
+            const username = "{{ username }}"; // Replace "YourUsername" with the actual username
+
+            const chatSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/'
+            );
+
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                document.querySelector('#chat-log').value += (data.username + ': ' + data.message + '\n');
+            };
+
+            chatSocket.onclose = function (e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            document.querySelector('#chat-message-input').focus();
+            document.querySelector('#chat-message-input').onkeyup = function (e) {
+                if (e.keyCode === 13) {  // enter, return
+                    document.querySelector('#chat-message-submit').click();
+                }
+            };
+
+            document.querySelector('#chat-message-submit').onclick = function (e) {
+                const messageInputDom = document.querySelector('#chat-message-input');
+                const message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                    'username': username,  // Include the username in the message data
+                    'message': message
+                }));
+                messageInputDom.value = '';
+            };
+
+
+        </script>
+        <!-- <script src="{% static 'onlineclasses/js/main.js' %}"></script> -->
+</body>
+
+</html>
