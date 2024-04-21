@@ -1,0 +1,144 @@
+{% extends 'courses/base.html' %}
+{% block title %}
+Enrollment Form
+{% endblock %}
+{% block content %}
+<h1 class="display-6 text-align center">ENROLLMENT FORM</h1>
+{% if error_message %}
+<div class="error">
+  <p>{{ error_message }}</p>
+</div>
+{% endif %}
+<form method="post">
+  {% csrf_token %}
+
+  {% if form.errors %}
+  <ul class="errorlist">
+    {% for field in form %}
+    {% if field.errors %}
+    <li>{{ field.label }}:
+      <ul class="errorlist">
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if form.non_field_errors %}
+  <ul class="errorlist">
+    {% for error in form.non_field_errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div>
+    <div class="form-group">
+      <label for="{{ form.student_name.id_for_label }}">Student Name:</label>
+      <br>
+      {{ form.student_name }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.email.id_for_label }}">Email:</label>
+      <br>
+      {{ form.email }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.enrolled_class.id_for_label }}">Enrolled Class:</label>
+      <br>
+      {{ form.enrolled_class }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.course.id_for_label }}">Select Course:</label>
+      <br>
+      {{ form.course }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.schedule.id_for_label }}">Select Schedule:</label>
+      <br>
+      {{ form.schedule }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.instructor.id_for_label }}">Select Instructor:</label>
+      <br>
+      <select name="{{ form.instructor.name }}" id="{{ form.instructor.id_for_label }}">
+        {% for instructor in instructors %}
+        <option value="{{ instructor.id }}">{{ instructor.user_profile }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Enroll</button>
+  </div>
+</form>
+
+<style>
+  body {
+    background-color: wheat;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    color: black;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="date"],
+  .form-group input[type="time"],
+  .form-group input[type="email"],
+  .form-group select {
+    width: 25%;
+    padding: 0.8rem;
+    font-size: 10px;
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  label {
+    font-weight: bold;
+    font-size: 15px;
+    color: darkblue;
+  }
+
+  button[type="submit"] {
+    width: 12%;
+    padding: 0.5rem 1rem;
+    background-color: darkblue;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-right: 0rem;
+  }
+</style>
+{% endblock %}

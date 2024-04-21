@@ -1,0 +1,131 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}
+Feedback
+{% endblock %}
+{% block css %}
+<style>
+    body {
+
+        background-image: url('https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg?auto=compress&cs=tinysrgb&w=600');
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: darkblue;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    form {
+        text-align: center;
+        padding: 4px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        font-size: 14px;
+        color: darkred;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+        width: 30%;
+        padding: 6px;
+        font-size: 12px;
+        border: 2px solid black;
+        border-radius: 4px;
+    }
+
+    textarea {
+        resize: vertical;
+        font-size: 12px;
+    }
+
+    select#id_rating {
+        width: 50%;
+        font-size: 14px;
+    }
+
+    button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .message {
+        font-size: 16px;
+        color: green;
+        text-align: center;
+        margin-top: 10px;
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Feedback Form</h1>
+
+<div>
+    {% if feedback_submitted %}
+    <p>Feedback approved!</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'class_feedback' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {{ form.email }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.class_id.id_for_label }}">Class:</label>
+            {{ form.class_id }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.schedule_id.id_for_label }}">Schedule:</label>
+            {{ form.schedule_id }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.feedback_text.id_for_label }}">Feedback Text:</label>
+            {{ form.feedback_text }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.rating.id_for_label }}">Rating:</label>
+            {{ form.rating }}
+        </div>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+</div>
+
+{% endblock %}

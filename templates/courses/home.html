@@ -1,0 +1,194 @@
+{% extends 'courses/base.html' %}
+{% load static %}
+{% block title %}
+Home page
+{% endblock %}
+{% block js %}
+<script src="{% static 'onlineclasses/js/homepage.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("https://images.unsplash.com/photo-1531685250784-7569952593d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHNpbXBsZSUyMGVkdWNhdGlvbmFsJTIwJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60");
+        background-size: cover;
+    }
+
+    .btn-explore {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 24px;
+        font-size: 18px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .btn-explore:hover {
+        background-color: #45a049;
+    }
+
+    .container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 100px;
+        color: maroon;
+        margin-bottom: 20px;
+        text-align: center;
+        font-family: 'Times New Roman', serif;
+    }
+
+    p {
+        font-size: 20px;
+        color: black;
+        text-align: center;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 16px 32px;
+        font-size: 24px;
+        text-align: center;
+        text-decoration: none;
+        background-color: gold;
+        color: black;
+        font-weight: bold;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+        margin-right: 10px;
+    }
+
+    .btn.yellow:hover {
+        background-color: #e6b800;
+    }
+
+    .border {
+        border: 1px solid #ccc;
+        padding: 0px;
+    }
+
+    .intro-container {
+        max-width: 800px;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .intro-heading {
+        font-size: 40px;
+        color: darkslategray;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .intro-text {
+        font-size: 20px;
+        color: black;
+        font-weight: bold;
+    }
+
+    .image-container {
+        position: absolute;
+    }
+
+    .image-container.top-left {
+        top: 10px;
+        left: 10px;
+    }
+
+    .image-container.top-right {
+        top: 10px;
+        right: 10px;
+    }
+
+    .image-container img {
+        width: 100px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .btn-container {
+        position: relative;
+    }
+
+    .btn-container .image-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .btn-container .image-container img {
+        width: 50px;
+        height: auto;
+        margin: 0 5px;
+    }
+    .image-container img {
+            width: 400px;
+            height: 400px;
+            margin-bottom: 10px;
+        }
+
+        .sliding-row {
+            width: 100%;
+            height: 40px;
+            overflow: hidden;
+            animation: slide 10s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: black;
+            margin-top: 50px;
+        }
+
+        .sliding-row span {
+            padding: 0 25px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes slide {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+</style>
+</head>
+<span style="font-size: 10px;">{{ request.user }}</span>
+<div class="container">
+    <h1 class="display-1">Hello There!</h1>
+    <p class="intro-heading">Welcome to our amazing collection of courses</p>
+
+    <p class="intro-text">Expand your knowledge and enhance your skills with our comprehensive learning materials.
+        Whether you are a beginner or an experienced professional, we have courses tailored to your needs.
+        Our expert instructors and engaging content will guide you on your learning journey</p>
+    <br>
+    <div class="btn-container">
+        <a class="btn" href="/explore_courses">Explore Courses</a>
+    </div>
+    <div class="sliding-row">
+        <span>These are the available courses on our website. Check them out:</span>
+        {% for course in courses %}
+            <span>{{ course.title }}</span>
+        {% endfor %}
+    </div>
+    
+</div>
+</div>
+
+
+{% endblock %}

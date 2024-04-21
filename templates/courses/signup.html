@@ -1,0 +1,184 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}
+Signup
+{% endblock %}
+
+{% block content %}
+
+<style>
+  body {
+    background-color: #0000ff82;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('https://images.unsplash.com/photo-1472289065668-ce650ac443d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bG9naW58ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60');
+    /* Replace with the background image path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .container {
+    width: 400px;
+    margin: 30px auto;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .container label {
+    color: #000080;
+  }
+
+  h1.display-1 {
+    font-size: 30px;
+    color: #006400;
+  }
+
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    color: #666;
+    font-size: 18px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-size: 15px;
+  }
+
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  .existing-user {
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .existing-user a {
+    color: #FF0000;
+    text-decoration: none;
+  }
+
+  .existing-user a:hover {
+    text-decoration: underline;
+  }
+
+  .homepage-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+  }
+
+  hr.heading-line {
+    margin: 20px auto;
+    width: 60px;
+    border: 2px solid #006400;
+    border-radius: 5px;
+  }
+</style>
+
+<div class="container">
+  <h1 class="display-1">Signup Page</h1>
+  <div>
+    <form action="/signup" method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_first_name" class="form-label">First Name:</label>
+        {{ form.first_name }}
+      </div>
+      <div class="mb-3">
+        <label for="id_last_name" class="form-label">Last Name:</label>
+        {{ form.last_name }}
+      </div>
+      <div class="mb-3">
+        <label for="id_username" class="form-label">Username:</label>
+        {{ form.username }}
+      </div>
+      <div class="mb-3">
+        <label for="id_email" class="form-label">Email:</label>
+        {{ form.email }}
+      </div>
+      <div class="mb-3">
+        <label for="id_password1" class="form-label">Password (Minimum Eight Characters):</label>
+        {{ form.password1 }}
+      </div>
+      <div class="mb-3">
+        <label for="id_password2" class="form-label">Confirm Password:</label>
+        {{ form.password2 }}
+      </div>
+      <div class="text-center">
+        <input type="submit" value="Register" class="btn btn-primary">
+      </div>
+    </form>
+    <div class="existing-user">
+      <a href="/login" style="font-size: 18px;">Already have an account? Click here</a>
+    </div>
+  </div>
+</div>
+<script>
+  // JavaScript styling
+  var inputFields = document.querySelectorAll('input[type="text"], input[type="password"], input[type="email"]');
+  inputFields.forEach(function (inputField) {
+    inputField.addEventListener('focus', function () {
+      this.style.border = '2px solid #4CAF50';
+    });
+
+    inputField.addEventListener('blur', function () {
+      this.style.border = '1px solid #ccc';
+    });
+  });
+  var existingUserLink = document.querySelector('.existing-user a');
+  existingUserLink.addEventListener('mouseover', function () {
+    this.style.color = 'darkblue';
+  });
+
+  existingUserLink.addEventListener('mouseout', function () {
+    this.style.color = '#FF0000';
+  });
+
+  var formLabels = document.querySelectorAll('label');
+  formLabels.forEach(function (label) {
+    label.addEventListener('mouseover', function () {
+      this.style.color = 'darkblue';
+    });
+
+    label.addEventListener('mouseout', function () {
+      this.style.color = 'red';
+    });
+  });
+</script>
+{% endblock %}
